@@ -1,0 +1,4 @@
+django==1.4.3
+south==0.7.6
+django-cron
+psycopg2==2.4.6
