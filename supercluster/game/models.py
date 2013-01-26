@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.db import models
 
+from django.utils.timezone import utc, make_aware
 
 class Game(models.Model):
     """
@@ -20,7 +21,7 @@ class Game(models.Model):
         advances to the next turn.
         """
         self.turn += 1
-        self.last_turn_time = datetime.now()
+        self.last_turn_time = datetime.utcnow().replace(tzinfo=utc)
         self.save()
         
 
@@ -29,7 +30,10 @@ class Game(models.Model):
         Returns a bool indicating if the current turn is over and should
         end.
         """
-        if (datetime.now() - self.last_turn_time).minutes >= self.turn_length:
+        now = datetime.utcnow().replace(tzinfo=utc)
+        delta = now - self.last_turn_time
+        delta_minutes = (delta.seconds // 60) % 60
+        if delta_minutes >= self.turn_length:
             return True
         return False
 
